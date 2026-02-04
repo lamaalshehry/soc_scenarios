@@ -1,4 +1,4 @@
-# 🛡️ SOC Incident Response & Threat Hunting Portfolio  
+# 🛡️ Incident Detection & Response
 **Microsoft Sentinel & Microsoft Defender for Endpoint (MDE)**
 
 ---
@@ -88,5 +88,11 @@ The following diagram maps each incident scenario to its **log source and detect
 ---
 
 ## 🚨 Incident Response Scenarios
+ 
+**NIST Special Publication 800-61 – Computer Security Incident Handling Guide**.
 
+The NIST SP 800-61 framework provides a structured and repeatable approach for handling
+security incidents and is widely adopted across enterprise SOCs.
+
+### NIST SP 800-61 Incident Response Lifecycle
   <img width="1948" height="992" alt="image" src="https://github.com/user-attachments/assets/9231cf65-cdf6-4a7f-8a4e-14d72a03921b" />
