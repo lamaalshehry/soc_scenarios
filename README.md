@@ -103,7 +103,86 @@ security incidents and is widely adopted across enterprise SOCs.
 # Scenario 1: Virtual Machine Brute Force Detection
 
 ## Incident Overview
-This project documents the investigation and response to a brute-force attack 
+This Scenario documents the investigation and response to a brute-force attack 
 targeting a Windows virtual machine, detected using Microsoft Sentinel 
 and Microsoft Defender for Endpoint.
+
+## Part 1: Detection Rule Creation (Microsoft Sentinel)
+The objective of this detection rule is to identify brute-force attack attempts 
+against Azure virtual machines by detecting multiple failed authentication 
+attempts originating from the same remote IP address within a short time window.
+
+### Rule Configuration
+- **Rule Type:** Scheduled Query Rule
+- **Severity:** Medium
+- **Data Source:** Microsoft Defender for Endpoint
+- **Table Used:** DeviceLogonEvents
+- **Threshold:** 10 or more failed logon attempts
+- **Time Window:** Last 5 hours
+
+Analytics Rule - General Settings
+
+<img width="1344" height="1207" alt="image" src="https://github.com/user-attachments/assets/460fa6ba-e697-426e-ab98-d139a76a9aff" />
+
+The detection rule was configured with a medium severity level, as the activity
+indicates an active brute-force attempt without confirmed compromise.
+MITRE ATT&CK mapping was applied to align the detection with credential access tactics.
+
+### MITRE ATT&CK Mapping
+The detection rule was mapped to the MITRE ATT&CK framework to align the alert
+with known adversary techniques.
+
+- **Tactic:** Credential Access
+- **Technique:** Brute Force (T1110)
+
+
+### Data Source
+- **Data Source:** Microsoft Defender for Endpoint
+- **Log Table:** DeviceLogonEvents
+
+The DeviceLogonEvents table provides detailed authentication activity,
+including successful, failed, and attempted logon events, making it suitable
+for detecting credential-based attacks.
+
+
+### KQL Query
+The following KQL query was used to detect brute-force attempts:
+
+```kql
+DeviceLogonEvents
+| where TimeGenerated > ago(5h)
+| where ActionType == "LogonFailed"
+| summarize FailedAttempts = count() by RemoteIP, DeviceName
+| where FailedAttempts >= 10
+| order by FailedAttempts desc
+```
+
+### Query Logic Explanation
+- The query filters authentication events generated within the last 5 hours
+  to focus on recent activity.
+- Only failed logon attempts are included to exclude normal successful access.
+- Events are aggregated by remote IP address and target device to identify
+  repeated authentication failures.
+- A threshold of 10 failed attempts is applied to reduce false positives
+  caused by normal user mistakes.
+
+#### View query results 
+<img width="1588" height="1374" alt="image" src="https://github.com/user-attachments/assets/0e6e1115-8128-48fd-b0ed-7e962389fcdc" />
+
+### Query Scheduling
+- The analytics rule is scheduled to run every 5 hours.
+- The lookback period is aligned with the query time window to ensure
+  consistent detection coverage.
+  
+### Entity Mapping
+Entity mapping was configured to enrich alerts and enable effective incident
+investigation within Microsoft Sentinel.
+- **IP Entity:** RemoteIP
+- **Host Entity:** DeviceName
+  
+### Detection Logic Validation
+The detection logic was validated by generating multiple failed login attempts
+against the target virtual machine. Once the defined threshold was exceeded,
+the analytics rule successfully triggered an alert and created an incident.
+
 
