@@ -186,3 +186,22 @@ against the target virtual machine. Once the defined threshold was exceeded,
 the analytics rule successfully triggered an alert and created an incident.
 
 
+
+## Part 2: Trigger Alert to Create Incident
+### Objective
+Validate that the analytics rule successfully triggers and creates an incident
+when the brute-force threshold is exceeded.
+
+### What Happened
+After generating multiple failed authentication attempts on the target virtual
+machine, the analytics rule was executed and successfully triggered.
+Microsoft Sentinel automatically created an incident based on the detected activity.
+
+### Result
+- An incident was created in Microsoft Sentinel.
+- Severity: Medium
+- Source: Scheduled Analytics Rule
+- Entities identified: Remote IP address and affected virtual machine.
+
+  <img width="2341" height="846" alt="image" src="https://github.com/user-attachments/assets/687d6813-b2f9-4b6e-be92-78e171523711" />
+
