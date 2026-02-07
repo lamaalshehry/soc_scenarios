@@ -244,12 +244,22 @@ compromise, a validation query was executed to check for successful logins
 originating from the same IP addresses.
 
 
+```kql
+DeviceLogonEvents
+| where DeviceName == "lamavmonboardin"
+| where ActionType == "LogonSuccess"
+| where RemoteIP in (
+    "178.57.110.29",
+    "194.180.49.142"
+)
+```
 
-<img width="831" height="610" alt="image" src="https://github.com/user-attachments/assets/62accba1-b40d-4b3b-b342-0e10e4b3dc6f" />
-
-The query returned no results, confirming that none of the identified IP
+- The query returned no results, confirming that none of the identified IP
 addresses successfully authenticated to the virtual machine. This indicates
 that the brute-force attack was unsuccessful and no system compromise occurred.
+
+<img width="654" height="248" alt="image" src="https://github.com/user-attachments/assets/eb407cf6-7013-475d-b51d-a6e96d0e2bba" />
+
 
 
 ### Containment, Eradication, and Recovery
