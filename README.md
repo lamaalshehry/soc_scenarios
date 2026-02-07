@@ -205,3 +205,79 @@ Microsoft Sentinel automatically created an incident based on the detected activ
 
   <img width="2341" height="846" alt="image" src="https://github.com/user-attachments/assets/687d6813-b2f9-4b6e-be92-78e171523711" />
 
+
+## Part 3: Work Incident (NIST 800-61)
+
+### Preparation
+- Document roles, responsibilities, and procedures.
+- Ensure tools, systems, and training are in place.
+
+### Detection and Analysis
+A scheduled analytics rule in Microsoft Sentinel triggered an alert after
+detecting multiple failed authentication attempts against a virtual machine.
+The alert indicated a potential brute-force attack originating from multiple
+external IP addresses.
+
+
+The following query was used to identify IP addresses that generated a high
+volume of failed authentication attempts against the target virtual machine.
+
+
+
+```kql
+DeviceLogonEvents
+| where DeviceName == "lamavmonboardin"
+| where ActionType == "LogonFailed" and TimeGenerated > ago(5h)
+| summarize EventCount = count () by RemoteIP, DeviceName
+| where EventCount >= 10
+| order by EventCount
+```
+
+
+
+<img width="1078" height="287" alt="image" src="https://github.com/user-attachments/assets/0ddc0c84-9fd3-4f51-813b-ac01fdf32917" />
+
+
+
+To determine whether the brute-force attempts resulted in a successful
+compromise, a validation query was executed to check for successful logins
+originating from the same IP addresses.
+
+
+
+<img width="831" height="610" alt="image" src="https://github.com/user-attachments/assets/62accba1-b40d-4b3b-b342-0e10e4b3dc6f" />
+
+The query returned no results, confirming that none of the identified IP
+addresses successfully authenticated to the virtual machine. This indicates
+that the brute-force attack was unsuccessful and no system compromise occurred.
+
+
+### Containment, Eradication, and Recovery
+After validating that the activity represented an active brute-force attempt,
+immediate containment actions were taken to reduce exposure and prevent further
+attempts. Public RDP access to the virtual machine was restricted by hardening
+the Network Security Group (NSG), limiting access to trusted sources only.
+
+No evidence of successful authentication or malware execution was identified.
+As a precautionary measure, antivirus scanning was considered using Microsoft
+Defender for Endpoint.
+
+Since the attack was unsuccessful and no compromise occurred, no recovery or
+system restoration actions were required, and the virtual machine continued
+operating normally.
+
+### Post-Incident Activities
+Incident findings and investigation results were documented within Microsoft
+Sentinel. Lessons learned from this incident highlighted the importance of
+restricting public exposure of virtual machines. A recommendation was made to
+apply stricter NSG baseline configurations for similar assets to reduce the risk
+of future brute-force attempts.
+
+### Incident Closure
+The incident was reviewed and confirmed as a true positive brute-force attack
+that did not result in a successful compromise. After completing investigation,
+containment, and documentation activities, the incident was formally closed in
+Microsoft Sentinel.
+
+
+
