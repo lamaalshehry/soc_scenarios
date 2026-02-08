@@ -277,17 +277,19 @@ system restoration actions were required, and the virtual machine continued
 operating normally.
 
 ### Post-Incident Activities
-Incident findings and investigation results were documented within Microsoft
-Sentinel. Lessons learned from this incident highlighted the importance of
-restricting public exposure of virtual machines. A recommendation was made to
-apply stricter NSG baseline configurations for similar assets to reduce the risk
-of future brute-force attempts.
+Following the incident investigation, it was confirmed that the brute-force
+attempt did not result in a successful compromise. Findings were documented,
+and a recommendation was made to restrict public RDP access by enforcing
+stricter Network Security Group (NSG) configurations for all virtual machines.
+
 
 ### Incident Closure
-The incident was reviewed and confirmed as a true positive brute-force attack
-that did not result in a successful compromise. After completing investigation,
-containment, and documentation activities, the incident was formally closed in
-Microsoft Sentinel.
+
+The incident was closed as a **True Positive – Suspicious Activity** Although
+brute-force attempts were observed, investigation confirmed that no successful
+authentication occurred and no system compromise was identified.
+
+<img width="903" height="957" alt="image" src="https://github.com/user-attachments/assets/ea3fdc70-0991-4d43-a74c-b3431e1bf2d2" />
 
 
 
