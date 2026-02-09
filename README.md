@@ -291,5 +291,10 @@ authentication occurred and no system compromise was identified.
 
 <img width="903" height="957" alt="image" src="https://github.com/user-attachments/assets/ea3fdc70-0991-4d43-a74c-b3431e1bf2d2" />
 
+---
 
+# Scenario 2: PowerShell Suspicious Web Request
 
+## Incident Overview
+
+<img width="2030" height="1157" alt="image" src="https://github.com/user-attachments/assets/3a2f0528-9d6c-4045-abb4-8581e08ecf55" />
