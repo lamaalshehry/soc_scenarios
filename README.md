@@ -302,6 +302,18 @@ authentication occurred and no system compromise was identified.
 
 <img width="2030" height="1157" alt="image" src="https://github.com/user-attachments/assets/3a2f0528-9d6c-4045-abb4-8581e08ecf55" />
 
+The diagram illustrates a post-exploitation scenario where an attacker leverages PowerShell to download and execute a malicious script from the internet.
+
+1. The attacker already has access to the endpoint.
+2. PowerShell is used with the `Invoke-WebRequest` command to download a remote script (malware.ps1).
+3. The script is saved locally on the system.
+4. The script is executed using the `-File` parameter.
+5. The malicious script may establish communication with a command-and-control (C2) server or perform data exfiltration.
+
+This technique represents:
+- Living-off-the-Land behavior
+- Execution (MITRE ATT&CK)
+- Potential Command and Control (C2)
 
 ## Objective
 Detect PowerShell usage of `Invoke-WebRequest` to download remote content and investigate the resulting incident in Microsoft Sentinel.
