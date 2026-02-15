@@ -301,3 +301,53 @@ authentication occurred and no system compromise was identified.
 ## Incident Overview
 
 <img width="2030" height="1157" alt="image" src="https://github.com/user-attachments/assets/3a2f0528-9d6c-4045-abb4-8581e08ecf55" />
+
+
+## Objective
+Detect PowerShell usage of `Invoke-WebRequest` to download remote content and investigate the resulting incident in Microsoft Sentinel.
+
+## Environment
+- Data Source: Microsoft Defender for Endpoint (DeviceProcessEvents)
+- SIEM: Microsoft Sentinel (Log Analytics workspace)
+- Entities: Account, Host, Process
+
+## Detection (KQL)
+
+
+```kql
+let TargetHostname = "windows-target-1"; // Replace with the name of your VM as it shows up in the logs
+DeviceProcessEvents
+| where DeviceName == TargetHostname //comment this line out for MORE results
+| where FileName == "powershell.exe"
+| where InitiatingProcessCommandLine contains "Invoke-WebRequest"
+| order by TimeGenerated
+```
+
+## Analytics Rule Configuration (Sentinel)
+- Type: Scheduled query rule
+- Frequency: every 4 hours
+- Lookup: last 24 hours
+- Incident creation: Enabled
+- Alert grouping: 1 incident per 24 hours
+- Entity mapping: Account (AccountName), Host (DeviceName), Process (ProcessCommandLine)
+
+## Investigation Summary
+- What triggered?
+- Which user/device?
+- What URLs/scripts were downloaded?
+- Was any script executed?
+
+## Incident Response (NIST 800-61)
+- Detection & Analysis:
+- Containment:
+- Eradication:
+- Recovery:
+- Post-Incident:
+- Closure:
+
+## MITRE ATT&CK Mapping
+Execution (PowerShell). Potentially C2/Exfiltration depending on script behavior.
+
+## Evidence
+Screenshots in `evidence/screenshots/`
+
