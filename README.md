@@ -325,15 +325,8 @@ Detect PowerShell usage of `Invoke-WebRequest` to download remote content and in
 
 ## Detection (KQL)
 
+<img width="2125" height="718" alt="image" src="https://github.com/user-attachments/assets/d0606cc7-505a-4648-9ca5-f793a7629359" />
 
-```kql
-let TargetHostname = "windows-target-1"; // Replace with the name of your VM as it shows up in the logs
-DeviceProcessEvents
-| where DeviceName == TargetHostname //comment this line out for MORE results
-| where FileName == "powershell.exe"
-| where InitiatingProcessCommandLine contains "Invoke-WebRequest"
-| order by TimeGenerated
-```
 
 ## Analytics Rule Configuration (Sentinel)
 - Type: Scheduled query rule
