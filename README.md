@@ -325,8 +325,15 @@ This technique represents:
 ### Objective
 Detect PowerShell usage of `Invoke-WebRequest` to download remote content and investigate the resulting incident in Microsoft Sentinel.
 
+#### Analytics rule details
+<img width="1371" height="1219" alt="image" src="https://github.com/user-attachments/assets/9521c773-1741-419f-bfc6-de782af06928" />
 
-- 
+---
+
+#### Mittre Attack: 
+<img width="1247" height="468" alt="image" src="https://github.com/user-attachments/assets/00984eda-6682-475d-85f1-e8c45e44bc00" />
+---
+
 ### Detection (KQL)
 Design a Sentinel Scheduled Query Rule within Log Analytics that will discover when PowerShell is detected using Invoke-WebRequest to download content.
 
@@ -343,37 +350,18 @@ DeviceProcessEvents
     InitiatingProcessFileName,
     InitiatingProcessCommandLine 
 ```
-
+---
 ### View query results:
 
 <img width="2182" height="684" alt="image" src="https://github.com/user-attachments/assets/49b20701-eb35-4a11-87cf-c080ccd57379" />
 
+---
+#### Entity Mapping 
+<img width="1261" height="726" alt="image" src="https://github.com/user-attachments/assets/ed99440e-9bcb-4d92-b29b-7e67de7c729a" />
 
-### Analytics Rule Configuration (Sentinel)
-- Type: Scheduled query rule
-- Frequency: every 4 hours
-- Lookup: last 24 hours
-- Incident creation: Enabled
-- Alert grouping: 1 incident per 24 hours
-- Entity mapping: Account (AccountName), Host (DeviceName), Process (ProcessCommandLine)
 
-### Investigation Summary
-- What triggered?
-- Which user/device?
-- What URLs/scripts were downloaded?
-- Was any script executed?
 
-### Incident Response (NIST 800-61)
-- Detection & Analysis:
-- Containment:
-- Eradication:
-- Recovery:
-- Post-Incident:
-- Closure:
 
-### MITRE ATT&CK Mapping
-Execution (PowerShell). Potentially C2/Exfiltration depending on script behavior.
 
-### Evidence
-Screenshots in `evidence/screenshots/`
+
 
