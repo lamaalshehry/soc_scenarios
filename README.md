@@ -315,20 +315,41 @@ This technique represents:
 - Execution (MITRE ATT&CK)
 - Potential Command and Control (C2)
 
-## Objective
-Detect PowerShell usage of `Invoke-WebRequest` to download remote content and investigate the resulting incident in Microsoft Sentinel.
-
-## Environment
+### Environment
 - Data Source: Microsoft Defender for Endpoint (DeviceProcessEvents)
 - SIEM: Microsoft Sentinel (Log Analytics workspace)
 - Entities: Account, Host, Process
 
-## Detection (KQL)
 
-<img width="2125" height="718" alt="image" src="https://github.com/user-attachments/assets/d0606cc7-505a-4648-9ca5-f793a7629359" />
+## Part 1: Create Alert Rule (PowerShell Suspicious Web Request)
+### Objective
+Detect PowerShell usage of `Invoke-WebRequest` to download remote content and investigate the resulting incident in Microsoft Sentinel.
 
 
-## Analytics Rule Configuration (Sentinel)
+- 
+### Detection (KQL)
+Design a Sentinel Scheduled Query Rule within Log Analytics that will discover when PowerShell is detected using Invoke-WebRequest to download content.
+
+```kql
+DeviceProcessEvents
+| where DeviceName == "lamavmonboardin"
+| where FileName == "powershell.exe"
+| where ProcessCommandLine contains "invoke-webrequest"
+| project 
+    TimeGenerated,
+    DeviceName,
+    AccountName,
+    ProcessCommandLine,
+    InitiatingProcessFileName,
+    InitiatingProcessCommandLine 
+```
+
+### View query results:
+
+<img width="2182" height="684" alt="image" src="https://github.com/user-attachments/assets/49b20701-eb35-4a11-87cf-c080ccd57379" />
+
+
+### Analytics Rule Configuration (Sentinel)
 - Type: Scheduled query rule
 - Frequency: every 4 hours
 - Lookup: last 24 hours
@@ -336,13 +357,13 @@ Detect PowerShell usage of `Invoke-WebRequest` to download remote content and in
 - Alert grouping: 1 incident per 24 hours
 - Entity mapping: Account (AccountName), Host (DeviceName), Process (ProcessCommandLine)
 
-## Investigation Summary
+### Investigation Summary
 - What triggered?
 - Which user/device?
 - What URLs/scripts were downloaded?
 - Was any script executed?
 
-## Incident Response (NIST 800-61)
+### Incident Response (NIST 800-61)
 - Detection & Analysis:
 - Containment:
 - Eradication:
@@ -350,9 +371,9 @@ Detect PowerShell usage of `Invoke-WebRequest` to download remote content and in
 - Post-Incident:
 - Closure:
 
-## MITRE ATT&CK Mapping
+### MITRE ATT&CK Mapping
 Execution (PowerShell). Potentially C2/Exfiltration depending on script behavior.
 
-## Evidence
+### Evidence
 Screenshots in `evidence/screenshots/`
 
