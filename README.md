@@ -332,7 +332,7 @@ Detect PowerShell usage of `Invoke-WebRequest` to download remote content and in
 
 
 #### Mittre Attack: 
-<img width="1247" height="468" alt="image" src="https://github.com/user-attachments/assets/00984eda-6682-475d-85f1-e8c45e44bc00" />
+<img width="1234" height="804" alt="image" src="https://github.com/user-attachments/assets/fe8c2ad9-4954-4f2c-a7c6-a14f0a66427f" />
 
 
 ### Detection Query 
