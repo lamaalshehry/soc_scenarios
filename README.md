@@ -395,7 +395,7 @@ Followed NIST SP 800-61 Incident Response Lifecycle.
 powershell.exe -ExecutionPolicy Bypass -Command Invoke-WebRequest -Uri https://raw.githubusercontent.com/.../eicar.ps1 -OutFile C:\programdata\eicar.ps1
 ```
 
-3.
+2.
 ```
 powershell.exe -ExecutionPolicy Bypass -File C:\programdata\eicar.ps1
 ```
