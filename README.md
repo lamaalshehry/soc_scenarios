@@ -536,6 +536,67 @@ Incident assigned to SOC Analyst (Myself). Followed NIST SP 800-61 Incident Resp
 
 ### Detection and Analysis
 
+Actions Taken:
+- Opened "Potential Impossible Travel" incident
+- Assigned incident to myself
+- Changed Status → Active
+
+<img width="816" height="556" alt="image" src="https://github.com/user-attachments/assets/73625710-f010-41ad-9fce-5b6ce021f727" />
+
+
+#### Executed:
+
+```kql
+let TargetUserPrincipalName = "<masked_user>";
+SigninLogs
+| where TimeGenerated > ago(7d)
+| where UserPrincipalName == TargetUserPrincipalName
+| project TimeGenerated,
+          IPAddress,
+          City=tostring(parse_json(LocationDetails).city),
+          Country=tostring(parse_json(LocationDetails).countryOrRegion)
+| order by TimeGenerated desc
+```
+
+##### Results:
+<img width="1692" height="991" alt="image" src="https://github.com/user-attachments/assets/cdca8625-0e65-49d4-912e-f4decffd0723" />
+
+## Investigation Findings
+
+| Time (UTC) | Country | City |
+|------------|---------|------|
+| 18:05–18:07 | United States | Boydton |
+| 18:47 | Saudi Arabia | Ar Riyadh |
+
+### Analysis
+- The same Entra ID account authenticated from:
+  - United States (Azure VM – East US region)
+  - Saudi Arabia (Local ISP)
+- Time difference between US and Saudi login: ~40 minutes
+- Physical travel between these locations within that timeframe is not possible
+  
+### Conclusion
+This activity technically matches impossible travel behavior.  
+However, the sign-ins were intentionally generated during lab simulation.
+
+Final Classification: **Benign Positive**
+
 ### Containment, Eradication & Recovery
+Real-World Response (If True Positive)
+- Would perform:
+- Disable Entra ID account
+- Revoke active sessions
+- Force password reset
+- Validate MFA
+- Contact user/management
+
+Lab Environment:
+- No containment required
 ### Post-Incident Activities
+
 ### Closure
+- Documented investigation notes inside Sentinel
+- Confirmed no active threat
+- Closed incident as: Benign Positive
+  
+<img width="1225" height="1398" alt="image" src="https://github.com/user-attachments/assets/d44fab41-7424-4674-bf23-72c1fd4db4ba" />
