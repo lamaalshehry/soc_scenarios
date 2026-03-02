@@ -485,14 +485,43 @@ SigninLogs
 
 ## Part 2: Trigger Alert to Create Incident
 
-### How It Was Triggered
+### 1) Log Generation – Multi-Location Sign-in Simulation
 
-To validate the rule, user sign-in activity was generated with location diversity (simulated through VPN / Azure test accounts with different country sources). The Sentinel analytics rule executed on schedule and triggered an alert when the number of unique locations exceeded the configured threshold.
+#### Objective
+Generate real Entra ID authentication telemetry in `SigninLogs` by signing in from two different network sources to simulate potential impossible travel behavior.
+
+### Step A — Sign-in from Local Device
+- Opened browser on local machine
+- Signed in to `https://portal.azure.com`
+- Waited 1–2 minutes for log ingestion
+
+### Step B — Sign-in from Azure VM (Different Region)
+- Connected to Azure Windows VM (Region: `<East US 2>`) via Bastion/RDP
+- Opened browser inside the VM
+- Signed in again using the same Entra ID account
+- Waited 1–2 minutes for ingestion
+
+### 2) Log Validation in Log Analytics
+
+KQL query used to confirm sign-ins originated from different public IP addresses and geographic locations:
+
+```kql
+SigninLogs
+| where TimeGenerated > ago(30m)
+| where UserPrincipalName == "4cede136078e7c5bed2d1d1439f884315d3d8697028277e3131d7956973869d0@lognpacific.com"
+| project TimeGenerated,
+          UserPrincipalName,
+          IPAddress,
+          City=tostring(parse_json(LocationDetails).city),
+          Country=tostring(parse_json(LocationDetails).countryOrRegion)
+| order by TimeGenerated desc
+```
 
 ### Log Verification in Sentinel
 
+<img width="2238" height="1189" alt="image" src="https://github.com/user-attachments/assets/71f853de-c24a-480d-8256-ba7eea1fb436" />
 
-
+- **Confirmed the same user account signed in from different IPs / locations** 
 
 
 
