@@ -455,27 +455,22 @@ Detect when a user appears to sign in from geographically disparate locations wi
 | Data Source                 | Azure Active Directory (SigninLogs)        |
 | Run Frequency               | Every 4 hours                              |
 | Lookup Period               | Last 5 hours                               |
-| Severity                    | Medium                                     |
-| Incident Creation           | Enabled                                    |
 | Entity Mapping              | UserPrincipalName → Account                |
 
 ### Detection Query (KQL)
 ```kql
-let TimePeriodThreshold = timespan(7d);
+let TimePeriodThreshold = timespan(7d); // Change to how far back you want to look
 let NumberOfDifferentLocationsAllowed = 2;
-
 SigninLogs
 | where TimeGenerated > ago(TimePeriodThreshold)
-| summarize Count=count()
-    by UserPrincipalName, UserId,
-       City=tostring(parse_json(LocationDetails).city),
-       State=tostring(parse_json(LocationDetails).state),
-       Country=tostring(parse_json(LocationDetails).countryOrRegion)
-| project UserPrincipalName, UserId, City, State, Country
-| summarize PotentialImpossibleTravelInstances=count()
-    by UserPrincipalName, UserId
+| summarize Count = count() by UserPrincipalName, City = tostring(parse_json(LocationDetails).city), State = tostring(parse_json(LocationDetails).state), Country = tostring(parse_json(LocationDetails).countryOrRegion)
+| project UserPrincipalName, City, State, Country
+| summarize PotentialImpossibleTravelInstances = count() by UserPrincipalName
 | where PotentialImpossibleTravelInstances > NumberOfDifferentLocationsAllowed
 ```
+
+#### Results: 
+<img width="2162" height="379" alt="image" src="https://github.com/user-attachments/assets/0d4cc70f-d13d-4939-b8c7-f360681030bb" />
 
 ### MITRE ATT&CK Mapping:
 
