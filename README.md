@@ -457,6 +457,10 @@ Detect when a user appears to sign in from geographically disparate locations wi
 | Lookup Period               | Last 5 hours                               |
 | Entity Mapping              | UserPrincipalName → Account                |
 
+
+<img width="2727" height="1007" alt="image" src="https://github.com/user-attachments/assets/f152c140-b824-49b8-96a3-db3cf051671f" />
+
+
 ### Detection Query (KQL)
 ```kql
 let TimePeriodThreshold = timespan(7d); // Change to how far back you want to look
@@ -469,12 +473,17 @@ SigninLogs
 | where PotentialImpossibleTravelInstances > NumberOfDifferentLocationsAllowed
 ```
 
-#### Results: 
-<img width="2162" height="379" alt="image" src="https://github.com/user-attachments/assets/0d4cc70f-d13d-4939-b8c7-f360681030bb" />
-
 ### MITRE ATT&CK Mapping:
 
 
+This detection aligns with the MITRE ATT&CK framework for identifying potential abuse of legitimate credentials in cloud environments.
+
+#### Technique Mapping
+
+| Tactic | Technique | Technique ID |
+|--------|-----------|--------------|
+| Credential Access / Defense Evasion | Valid Accounts | T1078 |
+| Cloud Account Abuse | Cloud Accounts | T1078.004 |
 
 
 
