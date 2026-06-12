@@ -1,11 +1,11 @@
 # 🛡️ Incident Detection & Response
-**Microsoft Sentinel & Microsoft Defender for Endpoint (MDE)**
+**Microsoft Sentinel**
 
 ---
 
 ## 📌 Overview
 
-This repository documents **hands-on Security Operations Center (SOC)** investigations conducted in a simulated Azure enterprise environment using **Microsoft Sentinel (SIEM)** and **Microsoft Defender for Endpoint (EDR/XDR)**.
+This repository documents **hands-on Security Operations Center (SOC)** investigations conducted in a simulated Azure enterprise environment using **Microsoft Sentinel (SIEM)**
 
 The focus of this portfolio is **practical analyst work**, including:
 
