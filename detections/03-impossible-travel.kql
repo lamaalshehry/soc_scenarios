@@ -1,0 +1,20 @@
+// ============================================================
+// Scenario 3 — Potential Impossible Travel (lab rule)
+// Table:     SigninLogs (Entra ID)
+// MITRE:     T1078 Valid Accounts, T1078.004 Cloud Accounts
+// Rule:      Scheduled, every 4h, lookback 5h
+// Entities:  Account -> UserPrincipalName
+// Note:      Counts distinct locations per user; does not consider
+//            time between sign-ins. See 03-impossible-travel-improved.kql
+// ============================================================
+let TimePeriodThreshold = timespan(7d); // Match this to the rule lookback in production
+let NumberOfDifferentLocationsAllowed = 2;
+SigninLogs
+| where TimeGenerated > ago(TimePeriodThreshold)
+| summarize Count = count() by UserPrincipalName,
+    City    = tostring(parse_json(LocationDetails).city),
+    State   = tostring(parse_json(LocationDetails).state),
+    Country = tostring(parse_json(LocationDetails).countryOrRegion)
+| project UserPrincipalName, City, State, Country
+| summarize PotentialImpossibleTravelInstances = count() by UserPrincipalName
+| where PotentialImpossibleTravelInstances > NumberOfDifferentLocationsAllowed

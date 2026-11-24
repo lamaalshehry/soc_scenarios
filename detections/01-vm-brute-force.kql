@@ -1,0 +1,23 @@
+// ============================================================
+// Scenario 1 — VM Brute Force Detection
+// Table:     DeviceLogonEvents (Microsoft Defender for Endpoint)
+// MITRE:     T1110.001 Brute Force: Password Guessing
+// Rule:      Scheduled, every 5h, lookback 5h, severity Medium
+// Entities:  IP -> RemoteIP, Host -> DeviceName
+// ============================================================
+DeviceLogonEvents
+| where TimeGenerated > ago(5h)
+| where ActionType == "LogonFailed"
+| summarize FailedAttempts = count() by RemoteIP, DeviceName
+| where FailedAttempts >= 10
+| order by FailedAttempts desc
+
+
+// ------------------------------------------------------------
+// Investigation pivot — did any attacking IP log on successfully?
+// Replace the IP list with the IPs from the incident.
+// ------------------------------------------------------------
+// DeviceLogonEvents
+// | where DeviceName == "<device>"
+// | where ActionType == "LogonSuccess"
+// | where RemoteIP in ("<ip1>", "<ip2>")

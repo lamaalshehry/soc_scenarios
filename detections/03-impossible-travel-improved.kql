@@ -1,0 +1,32 @@
+// ============================================================
+// Scenario 3 — Impossible Travel (improved, speed-based)
+// Table:     SigninLogs (Entra ID)
+// MITRE:     T1078.004 Valid Accounts: Cloud Accounts
+// Compares consecutive successful sign-ins per user and flags
+// travel speeds no person could achieve.
+// ============================================================
+// Improved: flag consecutive successful sign-ins whose implied travel speed is impossible
+let MaxSpeedKmh = 900;      // roughly commercial airliner speed
+let MinDistanceKm = 500;    // ignore small geo-IP inaccuracies
+SigninLogs
+| where TimeGenerated > ago(1d)
+| where ResultType == 0
+| extend Lat = toreal(LocationDetails.geoCoordinates.latitude),
+         Lon = toreal(LocationDetails.geoCoordinates.longitude),
+         City = tostring(LocationDetails.city),
+         Country = tostring(LocationDetails.countryOrRegion)
+| where isnotnull(Lat) and isnotnull(Lon)
+| project TimeGenerated, UserPrincipalName, IPAddress, City, Country, Lat, Lon
+| sort by UserPrincipalName asc, TimeGenerated asc
+| extend PrevUser = prev(UserPrincipalName), PrevTime = prev(TimeGenerated),
+         PrevLat = prev(Lat), PrevLon = prev(Lon),
+         PrevCity = prev(City), PrevCountry = prev(Country), PrevIP = prev(IPAddress)
+| where UserPrincipalName == PrevUser
+| extend DistanceKm = geo_distance_2points(PrevLon, PrevLat, Lon, Lat) / 1000.0,
+         Hours = datetime_diff('second', TimeGenerated, PrevTime) / 3600.0
+| extend SpeedKmh = iff(Hours > 0, DistanceKm / Hours, real(null))
+| where DistanceKm > MinDistanceKm and (isnull(SpeedKmh) or SpeedKmh > MaxSpeedKmh)
+| project TimeGenerated, UserPrincipalName,
+          From = strcat(PrevCity, ", ", PrevCountry), FromIP = PrevIP,
+          To = strcat(City, ", ", Country), ToIP = IPAddress,
+          DistanceKm = round(DistanceKm, 0), Hours = round(Hours, 2), SpeedKmh = round(SpeedKmh, 0)

@@ -1,0 +1,35 @@
+// ============================================================
+// Scenario 2 — PowerShell Suspicious Web Request
+// Table:     DeviceProcessEvents (Microsoft Defender for Endpoint)
+// MITRE:     T1059.001 PowerShell, T1105 Ingress Tool Transfer
+// Entities:  Account -> AccountName, Host -> DeviceName,
+//            Process -> ProcessCommandLine
+// ============================================================
+
+// --- Rule used in the lab (scoped to the lab VM) ---
+DeviceProcessEvents
+| where DeviceName == "lamavmonboardin"
+| where FileName == "powershell.exe"
+| where ProcessCommandLine contains "invoke-webrequest"
+| project
+    TimeGenerated,
+    DeviceName,
+    AccountName,
+    ProcessCommandLine,
+    InitiatingProcessFileName,
+    InitiatingProcessCommandLine
+
+
+// --- Broader hunting version (all devices, common download methods) ---
+// let DownloadPatterns = dynamic(["invoke-webrequest", "iwr ", "net.webclient",
+//     "downloadstring", "downloadfile", "start-bitstransfer", "invoke-restmethod", "irm "]);
+// let RiskyFlags = dynamic(["-executionpolicy bypass", "-ep bypass", "-encodedcommand",
+//     "-enc ", "-windowstyle hidden", "-w hidden", "-noprofile", "-nop "]);
+// DeviceProcessEvents
+// | where TimeGenerated > ago(1d)
+// | where FileName in~ ("powershell.exe", "pwsh.exe")
+// | where ProcessCommandLine has_any (DownloadPatterns)
+// | extend RiskyFlagHit = ProcessCommandLine has_any (RiskyFlags)
+// | project TimeGenerated, DeviceName, AccountName, ProcessCommandLine,
+//           RiskyFlagHit, InitiatingProcessFileName, InitiatingProcessCommandLine
+// | order by RiskyFlagHit desc, TimeGenerated desc
